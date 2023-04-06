@@ -1,9 +1,7 @@
 import { getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-// Firestoreはログインやユーザー登録の実装には使わないが、今後のことを考えて入れておく
 
-// .envファイルで設定した環境変数をfirebaseConfigに入れる
 const firebaseConfig = {
   apiKey: process.env.NEXT_PUBLIC_APIKEY,
   appId: process.env.NEXT_PUBLIC_APPID,
