@@ -5,9 +5,9 @@ import { useCallback, useEffect, useState } from 'react';
 import { db } from '@/lib/firebase/client';
 import { Term, termConverter } from '@/types/term';
 
-type Terms = Map<number, Term>;
-type UserTerms = Map<string, Terms>;
-type DateTerms = Map<string, UserTerms>;
+export type Terms = Map<number, Term>;
+export type UserTerms = Map<string, Terms>;
+export type DateTerms = Map<string, UserTerms>;
 
 export default function useFetchTerms(project_id: string, week: DateTime[]) {
   const [terms, setTerms] = useState<DateTerms>(new Map());

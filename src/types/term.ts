@@ -1,45 +1,7 @@
 import { FirestoreDataConverter } from 'firebase/firestore';
 
-export type TermType = 'breakfast' | 'lunch' | 'dinner';
-
-export const toTermType = (term: number): TermType => {
-  switch (term) {
-    case 0:
-      return 'breakfast';
-    case 1:
-      return 'lunch';
-    case 2:
-      return 'dinner';
-    default:
-      return 'breakfast';
-  }
-};
-
-export const toTermText = (term: number) => {
-  switch (term) {
-    case 0:
-      return '朝';
-    case 1:
-      return '昼';
-    case 2:
-      return '夜';
-    default:
-      return '朝';
-  }
-};
-
-export const fromTermType = (term: TermType): number => {
-  switch (term) {
-    case 'breakfast':
-      return 0;
-    case 'lunch':
-      return 1;
-    case 'dinner':
-      return 2;
-    default:
-      return 0;
-  }
-};
+export const termTypes = ['朝', '昼', '夜'] as const;
+export type TermType = (typeof termTypes)[number];
 
 export type Term = {
   date: string;
