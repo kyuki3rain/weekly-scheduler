@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 
 import DayCard from '@/components/DayCard';
 import Loading from '@/components/Loading';
+import Modal from '@/components/Modal';
 import useFetchTerms from '@/hooks/useFetchTerms';
 import { db } from '@/lib/firebase/admin';
 
@@ -31,10 +32,12 @@ export default function Home({ project_id, user_ids }: Props) {
             day={day}
             terms={terms}
             user_ids={user_ids}
+            project_id={project_id}
             key={day.toISODate()}
           ></DayCard>
         ))}
       </div>
+      <Modal />
     </>
   );
 }

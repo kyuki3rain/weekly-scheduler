@@ -1,16 +1,17 @@
 import { DateTime } from 'luxon';
 
 import Status from '@/components/Status';
-import { DateTerms } from '@/hooks/useFetchTerms';
+import { DateTerms } from '@/states/terms';
 import { termTypes } from '@/types/term';
 
 type Props = {
   day: DateTime;
+  project_id: string;
   terms: DateTerms;
   user_ids: string[];
 };
 
-export default function DayCard({ day, terms, user_ids }: Props) {
+export default function DayCard({ day, project_id, terms, user_ids }: Props) {
   const dayKey = day.toISODate();
   if (!dayKey) return <></>;
 
@@ -42,7 +43,15 @@ export default function DayCard({ day, terms, user_ids }: Props) {
                     className="my-auto flex-1 text-center"
                     key={`${dayKey}-${user_id}-${termType}`}
                   >
-                    <Status statusNum={term?.status}></Status>
+                    <Status
+                      term={{
+                        ...term,
+                        date: dayKey,
+                        project_id,
+                        term: i,
+                        user_id,
+                      }}
+                    ></Status>
                   </div>
                 );
               })}

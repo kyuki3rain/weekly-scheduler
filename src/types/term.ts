@@ -3,6 +3,9 @@ import { FirestoreDataConverter } from 'firebase/firestore';
 export const termTypes = ['朝', '昼', '夜'] as const;
 export type TermType = (typeof termTypes)[number];
 
+export const termTypeKeys = ['breakfast', 'lunch', 'dinner'] as const;
+export type TermTypeKey = (typeof termTypeKeys)[number];
+
 export type Term = {
   date: string;
   project_id: string;

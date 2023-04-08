@@ -1,16 +1,14 @@
 import { collectionGroup, getDocs, query, where } from 'firebase/firestore';
+import { useAtom } from 'jotai';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
 
 import { db } from '@/lib/firebase/client';
-import { Term, termConverter } from '@/types/term';
-
-export type Terms = Map<number, Term>;
-export type UserTerms = Map<string, Terms>;
-export type DateTerms = Map<string, UserTerms>;
+import { Terms, termsAtom, UserTerms } from '@/states/terms';
+import { termConverter } from '@/types/term';
 
 export default function useFetchTerms(project_id: string, week: DateTime[]) {
-  const [terms, setTerms] = useState<DateTerms>(new Map());
+  const [terms, setTerms] = useAtom(termsAtom);
   const [loading, setLoading] = useState<boolean>(true);
 
   const fetchTerm = useCallback(async () => {
@@ -36,7 +34,7 @@ export default function useFetchTerms(project_id: string, week: DateTime[]) {
       });
       setLoading(false);
     });
-  }, [project_id, week]);
+  }, [project_id, setTerms, week]);
 
   useEffect(() => {
     fetchTerm();
