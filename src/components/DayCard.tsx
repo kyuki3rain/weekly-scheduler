@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon';
 
 import Status from '@/components/Status';
+import { User } from '@/pages/projects/[project_id]';
 import { DateTerms } from '@/states/terms';
 import { termTypes } from '@/types/term';
 
@@ -8,10 +9,10 @@ type Props = {
   day: DateTime;
   project_id: string;
   terms: DateTerms;
-  user_ids: string[];
+  users: User[];
 };
 
-export default function DayCard({ day, project_id, terms, user_ids }: Props) {
+export default function DayCard({ day, project_id, terms, users }: Props) {
   const dayKey = day.toISODate();
   if (!dayKey) return <></>;
 
@@ -29,19 +30,19 @@ export default function DayCard({ day, project_id, terms, user_ids }: Props) {
             </div>
           ))}
         </div>
-        {user_ids.map((user_id) => {
-          const terms = userTerms?.get(user_id);
+        {users.map((user) => {
+          const terms = userTerms?.get(user.id);
           return (
-            <div className="flex flex-row" key={`${dayKey}-${user_id}`}>
+            <div className="flex flex-row" key={`${dayKey}-${user.id}`}>
               <div className="w-1/4 flex-1 break-words text-center">
-                {user_id}
+                {user.name}
               </div>
               {termTypes.map((termType, i) => {
                 const term = terms?.get(i);
                 return (
                   <div
                     className="my-auto flex-1 text-center"
-                    key={`${dayKey}-${user_id}-${termType}`}
+                    key={`${dayKey}-${user.id}-${termType}`}
                   >
                     <Status
                       term={{
@@ -49,7 +50,7 @@ export default function DayCard({ day, project_id, terms, user_ids }: Props) {
                         date: dayKey,
                         project_id,
                         term: i,
-                        user_id,
+                        user_id: user.id,
                       }}
                     ></Status>
                   </div>

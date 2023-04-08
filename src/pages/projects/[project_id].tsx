@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { GetServerSideProps } from 'next';
+import { getSession } from 'next-auth/react';
 import { useMemo } from 'react';
 
 import DayCard from '@/components/DayCard';
@@ -8,12 +9,17 @@ import Modal from '@/components/Modal';
 import useFetchTerms from '@/hooks/useFetchTerms';
 import { db } from '@/lib/firebase/admin';
 
-type Props = {
-  project_id: string;
-  user_ids: string[];
+export type User = {
+  id: string;
+  name: string;
 };
 
-export default function Home({ project_id, user_ids }: Props) {
+type Props = {
+  project_id: string;
+  users: User[];
+};
+
+export default function Home({ project_id, users }: Props) {
   const week = useMemo(() => {
     const today = DateTime.now().startOf('day');
     return [...Array(7)].map((_, i) => {
@@ -31,7 +37,7 @@ export default function Home({ project_id, user_ids }: Props) {
           <DayCard
             day={day}
             terms={terms}
-            user_ids={user_ids}
+            users={users}
             project_id={project_id}
             key={day.toISODate()}
           ></DayCard>
@@ -43,6 +49,11 @@ export default function Home({ project_id, user_ids }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
+  const session = await getSession(context);
+  if (!session?.user) {
+    return { props: {} };
+  }
+
   const project_id = context.params?.project_id;
   if (typeof project_id !== 'string' || project_id === '') {
     return {
@@ -54,10 +65,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .collection('projects')
     .doc(project_id)
     .collection('users');
-  const users = await usersRef.get();
-  const user_ids = users.docs.map((doc) => doc.id);
+  const snapshots = await usersRef.get();
+  const users = snapshots.docs.map((doc) => ({
+    id: doc.id,
+    name: doc.data()?.name ?? '',
+  }));
 
-  if (user_ids.length === 0) {
+  if (
+    users.length === 0 ||
+    !users.map((user) => user.id).includes(session.user.id)
+  ) {
     return {
       notFound: true,
     };
@@ -66,7 +83,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       project_id,
-      user_ids,
+      users,
     },
   };
 };

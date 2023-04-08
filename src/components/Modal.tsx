@@ -52,7 +52,6 @@ const ModalView = () => {
           const userTerms: UserTerms = prev.get(params.date) ?? new Map();
           const termMap: Terms = userTerms.get(params.user_id) ?? new Map();
           termMap.set(params.term, { ...params, status });
-          console.log(termMap);
           userTerms.set(params.user_id, termMap);
           return new Map(prev.set(params.date, userTerms));
         });
@@ -94,7 +93,7 @@ const ModalView = () => {
               else setTerm(1);
             }}
           >
-            <FiCircle className="h-20 w-20" />
+            <FiCircle className="h-12 w-12" />
             <span className="sr-only">いる</span>
           </button>
           <button
@@ -106,7 +105,7 @@ const ModalView = () => {
               else setTerm(0);
             }}
           >
-            <FiTriangle className="h-20 w-20" />
+            <FiTriangle className="h-12 w-12" />
             <span className="sr-only">わからない</span>
           </button>
           <button
@@ -118,7 +117,7 @@ const ModalView = () => {
               else setTerm(-1);
             }}
           >
-            <RxCross1 className="h-20 w-20" />
+            <RxCross1 className="h-12 w-12" />
             <span className="sr-only">いらない</span>
           </button>
         </div>

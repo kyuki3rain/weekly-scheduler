@@ -22,7 +22,6 @@ export default function useFetchTerms(project_id: string, week: DateTime[]) {
 
     getDocs(termQuery).then((snapshot) => {
       snapshot.forEach((doc) => {
-        console.log(doc.id, ' => ', doc.data());
         setTerms((prev) => {
           const term = doc.data();
           const userTerms: UserTerms = prev.get(term.date) ?? new Map();

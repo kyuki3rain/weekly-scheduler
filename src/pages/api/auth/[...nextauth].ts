@@ -6,6 +6,12 @@ import { db } from '@/lib/firebase/admin';
 
 export default NextAuth({
   adapter: FirestoreAdapter(db),
+  callbacks: {
+    session: async ({ session, user }) => {
+      session.user.id = user.id;
+      return Promise.resolve(session);
+    },
+  },
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_ID as string,
