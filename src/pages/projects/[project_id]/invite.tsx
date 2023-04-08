@@ -97,6 +97,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
+  const userRef = adminDB
+    .collection('projects')
+    .doc(project_id)
+    .collection('users')
+    .doc(session.user.id);
+  await userRef.set({ name: '' });
+
   return {
     props: {
       project_id,
