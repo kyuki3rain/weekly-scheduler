@@ -1,4 +1,4 @@
-import { DateTime } from 'luxon';
+import { DateTime, Settings } from 'luxon';
 
 import { termTypes } from '@/@types/term';
 import Status from '@/components/Status';
@@ -12,6 +12,8 @@ type Props = {
   users: User[];
 };
 
+Settings.defaultLocale = 'ja'; // 言語設定が必要です。
+
 export default function DayCard({ day, project_id, terms, users }: Props) {
   const dayKey = day.toISODate();
   if (!dayKey) return <></>;
@@ -21,7 +23,7 @@ export default function DayCard({ day, project_id, terms, users }: Props) {
   return (
     <div className="m-4">
       <div className="block max-w-sm rounded-lg border border-gray-200 bg-white p-4 shadow">
-        <div className="mb-4 text-center text-2xl">{dayKey}</div>
+        <div className="mb-4 text-center text-2xl">{`${dayKey}(${day.weekdayShort})`}</div>
         <div className="flex flex-row">
           <div className="w-64 flex-1 text-center">ユーザー名</div>
           {termTypes.map((termType) => (
