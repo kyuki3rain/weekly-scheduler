@@ -3,9 +3,9 @@ import { useAtom } from 'jotai';
 import { DateTime } from 'luxon';
 import { useCallback, useEffect, useState } from 'react';
 
+import { termConverter } from '@/@types/term';
 import { db } from '@/lib/firebase/client';
 import { Terms, termsAtom, UserTerms } from '@/states/terms';
-import { termConverter } from '@/types/term';
 
 export default function useFetchTerms(project_id: string, week: DateTime[]) {
   const [terms, setTerms] = useAtom(termsAtom);

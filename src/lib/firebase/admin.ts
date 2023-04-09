@@ -19,5 +19,5 @@ export const app = admin.apps?.length
         type: process.env.FIREBASE_TYPE,
       } as ServiceAccount),
     });
-export const auth = getAuth();
-export const db = getFirestore();
+export const auth = app ? getAuth(app) : getAuth();
+export const db = app ? getFirestore(app) : getFirestore();

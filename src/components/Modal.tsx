@@ -12,7 +12,7 @@ import {
   getTermTypeModalPramsAtom,
   setTermTypeModalCloseAtom,
 } from '@/states/termTypeModal';
-import { termConverter, termTypeKeys } from '@/types/term';
+import { termConverter, termTypeKeys } from '@/@types/term';
 
 const Modal = () => {
   const isOpen = useAtomValue(getTermTypeModalOpenAtom);

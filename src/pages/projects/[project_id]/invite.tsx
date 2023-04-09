@@ -9,6 +9,7 @@ import { useState } from 'react';
 import Loading from '@/components/Loading';
 import { db as adminDB } from '@/lib/firebase/admin';
 import { db as clientDB } from '@/lib/firebase/client';
+import LoginProvider from '@/providers/LoginProvider';
 
 type Props = {
   project_id: string;
@@ -23,44 +24,56 @@ export default function Home({ project_id, user_id }: Props) {
   if (loading) <Loading />;
 
   return (
-    <div className="mx-auto flex h-screen w-80 flex-col justify-center">
-      <div className="mb-4 text-center text-xl">名前を入力してください</div>
-      <div className="flex">
-        <input
-          type="text"
-          className="flex-1"
-          value={name}
-          onChange={(e) => setName(e.currentTarget.value)}
-        />
-        <button
-          type="button"
-          className=" ml-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 "
-          onClick={() => {
-            setLoading(true);
-            const userRef = doc(
-              clientDB,
-              'projects',
-              project_id,
-              'users',
-              user_id
-            );
-            setDoc(userRef, { name }).then(() => {
-              setLoading(false);
-              router.push(`/projects/${project_id}`);
-            });
-          }}
-        >
-          決定
-        </button>
+    <LoginProvider>
+      <div className="mx-auto flex h-screen w-80 flex-col justify-center">
+        <div className="mb-4 text-center text-xl">名前を入力してください</div>
+        <div className="flex">
+          <input
+            type="text"
+            className="flex-1"
+            value={name}
+            onChange={(e) => setName(e.currentTarget.value)}
+          />
+          <button
+            type="button"
+            className=" ml-2 rounded-lg bg-blue-700 px-5 py-2.5 text-sm font-medium text-white hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 "
+            onClick={() => {
+              setLoading(true);
+              const userRef = doc(
+                clientDB,
+                'projects',
+                project_id,
+                'users',
+                user_id
+              );
+              setDoc(userRef, { name })
+                .then(() => {
+                  setLoading(false);
+                  router.push(`/projects/${project_id}`);
+                })
+                .catch((e) => {
+                  console.log(e);
+                  console.log(`projects/${project_id}/users/${user_id}`);
+                });
+            }}
+          >
+            決定
+          </button>
+        </div>
       </div>
-    </div>
+    </LoginProvider>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
   if (!session?.user) {
-    return { props: {} };
+    return {
+      redirect: {
+        destination: `/signin?redirect=${context.locale}`,
+        permanent: true,
+      },
+    };
   }
 
   const project_id = context.params?.project_id;
@@ -84,6 +97,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .doc(token);
   const snapshot = await tokenRef.get();
   const expiredAt: Timestamp | undefined = snapshot.data()?.expiredAt;
+  console.log(expiredAt);
 
   if (!expiredAt) {
     return {
@@ -101,13 +115,15 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .collection('projects')
     .doc(project_id)
     .collection('users')
-    .doc(session.user.id);
+    .doc(session.user.uid);
   await userRef.set({ name: '' });
+
+  console.log(session.user.uid);
 
   return {
     props: {
       project_id,
-      user_id: session.user.id,
+      user_id: session.user.uid,
     },
   };
 };

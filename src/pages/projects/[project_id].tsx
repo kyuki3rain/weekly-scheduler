@@ -1,37 +1,54 @@
+import { useAtom } from 'jotai';
 import { DateTime } from 'luxon';
 import { GetServerSideProps } from 'next';
 import { getSession } from 'next-auth/react';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
+import { adminTermConverter, Term } from '@/@types/term';
 import DayCard from '@/components/DayCard';
-import Loading from '@/components/Loading';
 import Modal from '@/components/Modal';
-import useFetchTerms from '@/hooks/useFetchTerms';
 import { db } from '@/lib/firebase/admin';
+import LoginProvider from '@/providers/LoginProvider';
+import { Terms, termsAtom, UserTerms } from '@/states/terms';
 
 export type User = {
   id: string;
   name: string;
+  terms: Term[];
 };
 
 type Props = {
   project_id: string;
+  terms: Term[];
   users: User[];
 };
 
-export default function Home({ project_id, users }: Props) {
+export default function Home({ project_id, terms: termArray, users }: Props) {
+  const [terms, setTerms] = useAtom(termsAtom);
+
   const week = useMemo(() => {
     const today = DateTime.now().startOf('day');
     return [...Array(7)].map((_, i) => {
       return today.plus({ days: i });
     });
   }, []);
-  const { loading, terms } = useFetchTerms(project_id, week);
 
-  if (loading) return <Loading />;
+  useEffect(() => {
+    setTerms((prev) => {
+      termArray.forEach((term) => {
+        const userTerms: UserTerms = prev.get(term.date) ?? new Map();
+        const termMap: Terms = userTerms.get(term.user_id) ?? new Map();
+        termMap.set(term.term, term);
+        userTerms.set(term.user_id, termMap);
+        prev.set(term.date, userTerms);
+      });
+
+      return new Map(prev);
+    });
+  }, [setTerms, termArray]);
 
   return (
-    <>
+    <LoginProvider>
       <div className="flex flex-row flex-wrap justify-center">
         {week.map((day) => (
           <DayCard
@@ -44,14 +61,19 @@ export default function Home({ project_id, users }: Props) {
         ))}
       </div>
       <Modal />
-    </>
+    </LoginProvider>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const session = await getSession(context);
   if (!session?.user) {
-    return { props: {} };
+    return {
+      redirect: {
+        destination: `/signin?redirect=${context.resolvedUrl}`,
+        permanent: true,
+      },
+    };
   }
 
   const project_id = context.params?.project_id;
@@ -73,16 +95,35 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
   if (
     users.length === 0 ||
-    !users.map((user) => user.id).includes(session.user.id)
+    !users.map((user) => user.id).includes(session.user.uid)
   ) {
     return {
       notFound: true,
     };
   }
 
+  const today = DateTime.now().startOf('day');
+  const weekKey = [...Array(7)].map((_, i) => {
+    return today.plus({ days: i }).toISODate();
+  });
+
+  const termRef = db
+    .collectionGroup('terms')
+    .where('project_id', '==', project_id)
+    .where('date', 'in', weekKey)
+    .withConverter<Term>(adminTermConverter);
+
+  let terms: Term[] = [];
+  const snapshot = await termRef.get();
+
+  snapshot.forEach((doc) => {
+    terms.push(doc.data());
+  });
+
   return {
     props: {
       project_id,
+      terms,
       users,
     },
   };

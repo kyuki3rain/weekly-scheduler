@@ -1,22 +1,43 @@
-import { FirestoreAdapter } from '@next-auth/firebase-adapter';
+import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth';
-import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
 
-import { db } from '@/lib/firebase/admin';
+import { auth } from '@/lib/firebase/admin';
 
-export default NextAuth({
-  adapter: FirestoreAdapter(db),
+export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: async ({ session, user }) => {
-      session.user.id = user.id;
-      return Promise.resolve(session);
+    // @ts-ignore
+    async jwt({ token, user }) {
+      return { ...token, ...user };
+    },
+    // sessionにJWTトークンからのユーザ情報を格納
+    async session({ session, token }) {
+      session.user.emailVerified = token.emailVerified;
+      session.user.uid = token.uid;
+      return session;
     },
   },
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID as string,
-      clientSecret: process.env.GOOGLE_SECRET as string,
+    CredentialsProvider({
+      // @ts-ignore
+      async authorize({ idToken }: any, _req) {
+        if (idToken) {
+          try {
+            const decoded = await auth.verifyIdToken(idToken);
+
+            return { ...decoded };
+          } catch (err) {
+            console.error(err);
+          }
+        }
+        return null;
+      },
+      credentials: {},
     }),
   ],
-  secret: process.env.NEXTAUTH_SECRET,
-});
+  session: {
+    strategy: 'jwt',
+  },
+};
+
+export default NextAuth(authOptions);
