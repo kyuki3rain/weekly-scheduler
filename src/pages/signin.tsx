@@ -1,7 +1,7 @@
 import { GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import { signIn } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import Loading from '@/components/Loading';
@@ -31,6 +31,7 @@ export default function Home({ redirect }: Props) {
         });
       } else {
         setIsLoggedin(false);
+        signOut();
       }
     });
     return () => unsubscribe();

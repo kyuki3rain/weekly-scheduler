@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { signIn, useSession } from 'next-auth/react';
+import { signIn, signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 
 import Loading from '@/components/Loading';
@@ -25,7 +25,7 @@ export default function LoginProvider({ children }: Props) {
         }
       } else {
         setIsLoggedin(false);
-        router.push(`/signin?redirect=${router.asPath}`);
+        signOut();
       }
     });
     return () => unsubscribe();
