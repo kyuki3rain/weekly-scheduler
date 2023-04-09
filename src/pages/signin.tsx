@@ -19,7 +19,7 @@ export default function Home({ redirect }: Props) {
   const uiConfig = {
     signInFlow: 'popup',
     signInOptions: [GoogleAuthProvider.PROVIDER_ID],
-    signInSuccessUrl: router.asPath,
+    signInSuccessUrl: '/signin?redirect=' + redirect,
   };
 
   useEffect(() => {
