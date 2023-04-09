@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { FiCircle, FiTriangle } from 'react-icons/fi';
 import { RxCross1 } from 'react-icons/rx';
 
+import { termConverter, termTypeKeys } from '@/@types/term';
 import Loading from '@/components/Loading';
 import { db } from '@/lib/firebase/client';
 import { Terms, termsAtom, UserTerms } from '@/states/terms';
@@ -12,7 +13,6 @@ import {
   getTermTypeModalPramsAtom,
   setTermTypeModalCloseAtom,
 } from '@/states/termTypeModal';
-import { termConverter, termTypeKeys } from '@/@types/term';
 
 const Modal = () => {
   const isOpen = useAtomValue(getTermTypeModalOpenAtom);

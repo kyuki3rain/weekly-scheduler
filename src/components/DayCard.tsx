@@ -1,9 +1,9 @@
 import { DateTime } from 'luxon';
 
+import { termTypes } from '@/@types/term';
 import Status from '@/components/Status';
 import { User } from '@/pages/projects/[project_id]';
 import { DateTerms } from '@/states/terms';
-import { termTypes } from '@/@types/term';
 
 type Props = {
   day: DateTime;
