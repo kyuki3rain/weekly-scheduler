@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Loading from '@/components/Loading';
 import { db as adminDB } from '@/lib/firebase/admin';
@@ -20,8 +20,25 @@ export default function Home({ project_id, user_id }: Props) {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [pageLoading, setPageLoading] = useState(false);
 
-  if (loading) return <Loading />;
+  useEffect(() => {
+    const handleStart = (url: string) =>
+      url !== router.asPath && setPageLoading(true);
+    const handleComplete = () => setPageLoading(false);
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleComplete);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleComplete);
+    };
+  });
+
+  if (loading || pageLoading) return <Loading />;
 
   return (
     <LoginProvider>
