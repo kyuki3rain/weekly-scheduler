@@ -52,8 +52,7 @@ export default function Home({ project_id, user_id }: Props) {
                   router.push(`/projects/${project_id}`);
                 })
                 .catch((e) => {
-                  console.log(e);
-                  console.log(`projects/${project_id}/users/${user_id}`);
+                  console.error(e);
                 });
             }}
           >
@@ -97,7 +96,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .doc(token);
   const snapshot = await tokenRef.get();
   const expiredAt: Timestamp | undefined = snapshot.data()?.expiredAt;
-  console.log(expiredAt);
 
   if (!expiredAt) {
     return {
@@ -117,8 +115,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .collection('users')
     .doc(session.user.uid);
   await userRef.set({ name: '' });
-
-  console.log(session.user.uid);
 
   return {
     props: {
