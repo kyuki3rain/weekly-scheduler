@@ -21,7 +21,7 @@ export default function Home({ project_id, user_id }: Props) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  if (loading) <Loading />;
+  if (loading) return <Loading />;
 
   return (
     <LoginProvider>
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   if (!session?.user) {
     return {
       redirect: {
-        destination: `/signin?redirect=${context.locale}`,
+        destination: `/signin?redirect=${context.resolvedUrl}`,
         permanent: true,
       },
     };

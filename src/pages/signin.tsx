@@ -2,7 +2,7 @@ import { GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import Loading from '@/components/Loading';
 import StyledFirebaseAuth from '@/components/StyledFirebaseAuth';
@@ -14,6 +14,7 @@ type Props = {
 
 export default function Home({ redirect }: Props) {
   const router = useRouter();
+  const [isLoggedin, setIsLoggedin] = useState(true);
 
   const uiConfig = {
     signInFlow: 'popup',
@@ -24,15 +25,18 @@ export default function Home({ redirect }: Props) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
+        setIsLoggedin(true);
         user.getIdToken().then((idToken) => {
           signIn('credentials', { callbackUrl: redirect, idToken });
         });
+      } else {
+        setIsLoggedin(false);
       }
     });
     return () => unsubscribe();
   }, [redirect]);
 
-  if (auth.currentUser) return <Loading></Loading>;
+  if (isLoggedin) return <Loading></Loading>;
 
   return (
     <div>
@@ -44,7 +48,11 @@ export default function Home({ redirect }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const redirect = context.query?.redirect;
-  if (typeof redirect !== 'string' || redirect === '') {
+  if (
+    redirect === undefined ||
+    typeof redirect !== 'string' ||
+    redirect === ''
+  ) {
     return {
       notFound: true,
     };

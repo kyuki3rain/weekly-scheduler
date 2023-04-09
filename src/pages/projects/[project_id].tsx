@@ -88,10 +88,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .doc(project_id)
     .collection('users');
   const snapshots = await usersRef.get();
-  const users = snapshots.docs.map((doc) => ({
-    id: doc.id,
-    name: doc.data()?.name ?? '',
-  }));
+  const users = snapshots.docs
+    .map((doc) => ({
+      id: doc.id,
+      name: doc.data()?.name ?? '',
+    }))
+    .flatMap((user) => (user.name === '' ? [] : [user]));
 
   if (
     users.length === 0 ||
