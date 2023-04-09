@@ -33,6 +33,7 @@ export default function DayCard({ day, project_id, terms, users }: Props) {
           ))}
         </div>
         {users.map((user) => {
+          if (user.name === '') return <></>;
           const terms = userTerms?.get(user.id);
           return (
             <div className="flex flex-row" key={`${dayKey}-${user.id}`}>
