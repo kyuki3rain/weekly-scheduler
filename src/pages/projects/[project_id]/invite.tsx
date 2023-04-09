@@ -131,6 +131,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     .doc(project_id)
     .collection('users')
     .doc(session.user.uid);
+  const doc = await userRef.get();
+
+  if (doc.exists) {
+    return {
+      redirect: {
+        destination: `/projects/${project_id}`,
+        permanent: true,
+      },
+    };
+  }
+
   await userRef.set({ name: '' });
 
   return {
