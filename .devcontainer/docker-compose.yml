@@ -1,0 +1,11 @@
+version: '3'
+services:
+  app:
+    build: .                  # Dockerfileがあるディレクトリ
+    restart: always           # 常に再起動
+    working_dir: '/workspace' # デフォルトの作業ディレクトリ
+    tty: true                 # コンテナを終了させずに待たせる
+    volumes:                  # ホストとゲストのディレクトリを紐づける
+      - type: bind            # ホストのディレクトリをゲストにマウントさせる
+        source: ../           # ホストの`workspace`ディレクトリを指定
+        target: /workspace    # ゲストの`/workspace`にマウントさせる
