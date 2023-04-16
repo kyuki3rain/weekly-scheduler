@@ -1,5 +1,6 @@
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 
 import Loading from '@/components/Loading';
 import { useLogin } from '@/hooks/useLogin';
@@ -12,10 +13,11 @@ export default function Home({ redirect }: Props) {
   const { isLoading, isLoggedIn } = useLogin(false);
   const router = useRouter();
 
-  if (isLoggedIn) {
-    router.push(redirect);
-    return <div>ログイン完了しました</div>;
-  }
+  useEffect(() => {
+    if (isLoggedIn) router.push(redirect);
+  }, [isLoggedIn, redirect, router]);
+
+  if (isLoggedIn) return <div>ログイン完了しました</div>;
 
   if (isLoading) return <Loading></Loading>;
 
