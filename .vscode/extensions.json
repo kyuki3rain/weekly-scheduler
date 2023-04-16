@@ -2,6 +2,7 @@
   "recommendations": [
     "esbenp.prettier-vscode",
     "github.copilot",
-    "bradlc.vscode-tailwindcss"
+    "bradlc.vscode-tailwindcss",
+    "dbaeumer.vscode-eslint"
   ]
 }

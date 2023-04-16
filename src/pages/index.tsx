@@ -31,9 +31,9 @@ export default function Home() {
   }
 
   return (
-    <>
+    <LoginProvider>
       Not signed in <br />
       <Link href={`/signin?redirect=${router.asPath}`}>sign in</Link>
-    </>
+    </LoginProvider>
   );
 }
