@@ -24,7 +24,7 @@ export default function Home({ redirect }: Props) {
   return (
     <div>
       <div>未ログイン</div>
-      <button onClick={() => router.push(redirect)}></button>
+      <button onClick={() => router.reload()}>リロード</button>
     </div>
   );
 }
