@@ -3,7 +3,7 @@ import qs from 'qs';
 
 import { auth } from '@/lib/firebase/admin';
 
-const Verify: NextApiHandler = async (req, res) => {
+const verify: NextApiHandler = async (req, res) => {
   // id tokenを取得
   const idToken = req.body.idToken;
 
@@ -19,6 +19,7 @@ const Verify: NextApiHandler = async (req, res) => {
     method: 'POST',
   });
   const data = await response.json();
+
   if (response.status !== 200) {
     // IDトークンが有効ではない場合
     res.status(400).send(data.error);
@@ -30,4 +31,4 @@ const Verify: NextApiHandler = async (req, res) => {
   res.status(200).send(token);
 };
 
-export default Verify;
+export default verify;

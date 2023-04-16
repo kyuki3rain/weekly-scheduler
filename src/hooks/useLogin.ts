@@ -8,9 +8,10 @@ import { auth } from '@/lib/firebase/client';
 export const useLogin = (needToSignin = false) => {
   const router = useRouter();
   const { status } = useSession();
-  const [idToken, setIdToken] = useState<string | null>(null);
+  const [liffIdToken, setLiffIdToken] = useState<string | null>(null);
+  const [firebaseIdToken, setFirebaseIdToken] = useState<string | null>(null);
   const [firebaseLoggedIn, setFirebaseLoggedIn] = useState(false);
-  const liffLoggedIn = useMemo(() => idToken !== null, [idToken]);
+  const [liffLoggedIn, setLiffLoggedIn] = useState(false);
   const authLoggedIn = useMemo(() => status === 'authenticated', [status]);
   const isLoggedIn = useMemo(
     () => liffLoggedIn && authLoggedIn && firebaseLoggedIn,
@@ -35,12 +36,14 @@ export const useLogin = (needToSignin = false) => {
         .init({ liffId: process.env.NEXT_PUBLIC_LIFF_ID as string })
         .then(() => {
           if (!liff.isLoggedIn()) {
+            setLiffLoggedIn(false);
             if (needToSignin) router.push(`/signin?redirect=${router.asPath}`);
-            else liff.login({ redirectUri: router.asPath });
+            else liff.login();
             return;
           }
 
-          setIdToken(liff.getIDToken());
+          setLiffIdToken(liff.getIDToken());
+          setLiffLoggedIn(true);
           setLiffLoading(false);
         })
         .catch((err: any) => {
@@ -50,48 +53,64 @@ export const useLogin = (needToSignin = false) => {
   }, [liffLoggedIn, needToSignin, router]);
 
   useEffect(() => {
-    if (!liffLoggedIn) return;
+    if (liffIdToken === null) return;
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
-        setFirebaseLoggedIn(true);
-        setFirebaseLoading(false);
+        user.getIdToken().then((idToken) => {
+          setFirebaseLoggedIn(true);
+          setFirebaseIdToken(idToken);
+          setFirebaseLoading(false);
+        });
       } else {
         setFirebaseLoading(true);
         // 作成したapiにidトークンをpost
+        console.log('token', liffIdToken);
         fetch('/api/verify', {
           body: JSON.stringify({
-            idToken: idToken,
+            idToken: liffIdToken,
           }),
           headers: {
             'Content-Type': 'application/json',
           },
           method: 'POST',
-        }).then((response) => {
-          response.text().then((data) => {
-            // 返ってきたカスタムトークンでFirebase authにログイン
-            signInWithCustomToken(auth, data).then(() => {
-              setFirebaseLoading(false);
-              setFirebaseLoggedIn(true);
+        })
+          .then((response) => {
+            console.log(response);
+            response.text().then((data) => {
+              console.log(data);
+
+              // 返ってきたカスタムトークンでFirebase authにログイン
+              signInWithCustomToken(auth, data)
+                .then((response) => {
+                  console.log(response.user);
+                  response.user.getIdToken().then((idToken) => {
+                    setFirebaseIdToken(idToken);
+                    setFirebaseLoading(false);
+                  });
+                })
+                .catch((e) => console.log(e));
             });
+          })
+          .catch((e) => {
+            console.log(e);
           });
-        });
       }
     });
 
     return () => unsubscribe();
-  }, [idToken, liffLoggedIn]);
+  }, [firebaseIdToken, liffIdToken, liffLoggedIn]);
 
   useEffect(() => {
-    if (!liffLoggedIn) return;
+    if (liffIdToken === null || firebaseIdToken === null) return;
 
     if (status === 'unauthenticated') {
-      signIn('credentials', { callbackUrl: router.asPath, idToken });
+      signIn('credentials', { callbackUrl: router.asPath, firebaseIdToken });
     }
-  }, [status, idToken, router.asPath, liffLoggedIn]);
+  }, [status, firebaseIdToken, router.asPath, liffIdToken]);
 
-  console.log('LoggedIn: ', authLoggedIn, firebaseLoggedIn, liffLoggedIn);
-  console.log('Loading: ', authLoading, firebaseLoading, liffLoading);
+  console.log('LoggedIn: ', liffLoggedIn, firebaseLoggedIn, authLoggedIn);
+  console.log('Loading: ', liffLoading, firebaseLoading, authLoading);
 
   return {
     authLoggedIn,
