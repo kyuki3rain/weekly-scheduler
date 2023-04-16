@@ -105,7 +105,10 @@ export const useLogin = (needToSignin = false) => {
     if (liffIdToken === null || firebaseIdToken === null) return;
 
     if (status === 'unauthenticated') {
-      signIn('credentials', { callbackUrl: router.asPath, firebaseIdToken });
+      signIn('credentials', {
+        callbackUrl: router.asPath,
+        idToken: firebaseIdToken,
+      });
     }
   }, [status, firebaseIdToken, router.asPath, liffIdToken]);
 
