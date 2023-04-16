@@ -78,13 +78,11 @@ export const useLogin = (needToSignin = false) => {
           .then((response) => {
             console.log(response);
             response.text().then((data) => {
-              console.log(data);
-
               // 返ってきたカスタムトークンでFirebase authにログイン
               signInWithCustomToken(auth, data)
                 .then((response) => {
-                  console.log(response.user);
                   response.user.getIdToken().then((idToken) => {
+                    setFirebaseLoggedIn(true);
                     setFirebaseIdToken(idToken);
                     setFirebaseLoading(false);
                   });
@@ -111,9 +109,6 @@ export const useLogin = (needToSignin = false) => {
       });
     }
   }, [status, firebaseIdToken, router.asPath, liffIdToken]);
-
-  console.log('LoggedIn: ', liffLoggedIn, firebaseLoggedIn, authLoggedIn);
-  console.log('Loading: ', liffLoading, firebaseLoading, authLoading);
 
   return {
     authLoggedIn,

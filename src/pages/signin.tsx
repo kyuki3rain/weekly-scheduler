@@ -21,7 +21,12 @@ export default function Home({ redirect }: Props) {
 
   if (isLoading) return <Loading></Loading>;
 
-  return <div>未ログイン</div>;
+  return (
+    <div>
+      <div>未ログイン</div>
+      <button onClick={() => router.push(redirect)}></button>
+    </div>
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
