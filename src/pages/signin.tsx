@@ -1,47 +1,20 @@
-import { GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth';
 import { GetServerSideProps } from 'next';
-import { signIn } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 
 import Loading from '@/components/Loading';
-import StyledFirebaseAuth from '@/components/StyledFirebaseAuth';
-import { auth } from '@/lib/firebase/client';
+import { useLogin } from '@/hooks/useLogin';
 
 type Props = {
   redirect: string;
 };
 
 export default function Home({ redirect }: Props) {
-  const [isLoggedin, setIsLoggedin] = useState(true);
+  const { isLoading, isLoggedIn } = useLogin(false);
 
-  const uiConfig = {
-    signInFlow: 'popup',
-    signInOptions: [GoogleAuthProvider.PROVIDER_ID],
-    signInSuccessUrl: '/signin?redirect=' + redirect,
-  };
+  if (isLoggedIn) return <div>ログイン完了しました</div>;
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setIsLoggedin(true);
-        user.getIdToken().then((idToken) => {
-          signIn('credentials', { callbackUrl: redirect, idToken });
-        });
-      } else {
-        setIsLoggedin(false);
-      }
-    });
-    return () => unsubscribe();
-  }, [redirect]);
+  if (isLoading) return <Loading></Loading>;
 
-  if (isLoggedin) return <Loading></Loading>;
-
-  return (
-    <div>
-      ログインが必要です
-      <StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={auth} />
-    </div>
-  );
+  return <div>未ログイン</div>;
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {

@@ -4,7 +4,8 @@
     "simple-import-sort",
     "import",
     "unused-imports",
-    "tailwindcss"
+    "tailwindcss",
+    "react-hooks"
   ],
   "extends": [
     "next/core-web-vitals",
@@ -27,7 +28,9 @@
     "import/first": "error",
     "import/newline-after-import": "error",
     "import/no-duplicates": "error",
-    "unused-imports/no-unused-imports": "error"
+    "unused-imports/no-unused-imports": "error",
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn"
   },
   "settings": {
     "tailwindcss": {
