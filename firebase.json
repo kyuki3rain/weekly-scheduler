@@ -30,7 +30,7 @@
         "firebase-debug.*.log"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "pnpm lint:functions",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }

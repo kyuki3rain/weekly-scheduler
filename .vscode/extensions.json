@@ -3,6 +3,7 @@
     "esbenp.prettier-vscode",
     "github.copilot",
     "bradlc.vscode-tailwindcss",
-    "dbaeumer.vscode-eslint"
+    "dbaeumer.vscode-eslint",
+    "csstools.postcss"
   ]
 }
