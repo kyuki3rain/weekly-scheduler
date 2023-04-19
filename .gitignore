@@ -44,3 +44,5 @@ next-env.d.ts
 
 # firebase emulator
 *-debug.log
+
+/tmp

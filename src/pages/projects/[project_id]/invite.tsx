@@ -142,7 +142,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  await userRef.set({ name: '' });
+  await userRef.set({ name: '', admin: false, project_id });
 
   return {
     props: {
