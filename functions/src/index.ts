@@ -7,7 +7,7 @@ admin.initializeApp();
 const db = admin.firestore();
 
 export const weekendReminder = functions.pubsub
-  .schedule("every sunday 09:00")
+  .schedule("every sunday 20:00")
   .timeZone("Asia/Tokyo")
   .onRun(async () => {
     const client = new line.Client({
