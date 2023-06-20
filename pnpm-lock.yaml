@@ -6,7 +6,7 @@ dependencies:
     version: 2.22.1
   '@next-auth/firebase-adapter':
     specifier: ^2.0.1
-    version: 2.0.1(firebase-admin@11.5.0)(next-auth@4.21.1)
+    version: 2.0.1(firebase-admin@11.5.0)(next-auth@4.22.1)
   express:
     specifier: ^4.18.2
     version: 4.18.2
@@ -29,8 +29,8 @@ dependencies:
     specifier: 13.2.4
     version: 13.2.4(react-dom@18.2.0)(react@18.2.0)
   next-auth:
-    specifier: ^4.21.1
-    version: 4.21.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
+    specifier: ^4.22.1
+    version: 4.22.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
   react:
     specifier: 18.2.0
     version: 18.2.0
@@ -1534,14 +1534,14 @@ packages:
       - supports-color
     dev: false
 
-  /@next-auth/firebase-adapter@2.0.1(firebase-admin@11.5.0)(next-auth@4.21.1):
+  /@next-auth/firebase-adapter@2.0.1(firebase-admin@11.5.0)(next-auth@4.22.1):
     resolution: {integrity: sha512-4bQTa+IU8/I/mSOQcnrpQ9BYM6Xpk5BJx1TrxDpk4xKl2z0ZKE7Un+yl+U/9crmfpTvCoLOh6j9axmJMacJV2w==}
     peerDependencies:
       firebase-admin: ^11.4.1
       next-auth: ^4
     dependencies:
       firebase-admin: 11.5.0
-      next-auth: 4.21.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.22.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@13.2.4:
@@ -4412,8 +4412,8 @@ packages:
     engines: {node: '>= 0.6'}
     dev: false
 
-  /next-auth@4.21.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-NYkU4jAPSVxWhCblE8dDFAnKM7kOoO/QEobQ0RoEVP9Wox99A3PKHwOAsWhSg8ahJG/iKIWk2Bo1xHvsS4R39Q==}
+  /next-auth@4.22.1(next@13.2.4)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-NTR3f6W7/AWXKw8GSsgSyQcDW6jkslZLH8AiZa5PQ09w1kR8uHtR9rez/E9gAq/o17+p0JYHE8QjF3RoniiObA==}
     peerDependencies:
       next: ^12.2.5 || ^13
       nodemailer: ^6.6.5
